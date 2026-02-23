@@ -1,6 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 import Button from "@/components/ui/Button";
 
 interface HeaderProps {
@@ -8,6 +10,24 @@ interface HeaderProps {
 }
 
 export default function Header({ showAuth = true }: HeaderProps) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (!showAuth) return;
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsLoggedIn(!!user);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session?.user);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [showAuth]);
+
   return (
     <header className="w-full border-b border-border bg-parchment/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="section-container flex items-center justify-between h-16">
@@ -24,15 +44,23 @@ export default function Header({ showAuth = true }: HeaderProps) {
           </Link>
           {showAuth && (
             <>
-              <Link
-                href="/login"
-                className="font-body text-sm text-ink-secondary hover:text-ink transition-colors"
-              >
-                Log in
-              </Link>
-              <Link href="/setup">
-                <Button size="sm">Start Your First Interview</Button>
-              </Link>
+              {isLoggedIn ? (
+                <Link href="/dashboard">
+                  <Button size="sm">Dashboard</Button>
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="font-body text-sm text-ink-secondary hover:text-ink transition-colors"
+                  >
+                    Log in
+                  </Link>
+                  <Link href="/setup">
+                    <Button size="sm">Start Your First Interview</Button>
+                  </Link>
+                </>
+              )}
             </>
           )}
         </nav>

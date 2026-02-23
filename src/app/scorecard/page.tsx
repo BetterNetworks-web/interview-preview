@@ -58,9 +58,21 @@ export default function ScorecardPage() {
       setSaving(true);
 
       try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (!session?.access_token) {
+          setSaving(false);
+          return false;
+        }
+
         const res = await fetch("/api/scorecard", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
           body: JSON.stringify({
             interview: {
               role: interviewData.role,
