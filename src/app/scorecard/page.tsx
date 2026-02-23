@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import ScoreBar from "@/components/ui/ScoreBar";
@@ -44,7 +45,53 @@ export default function ScorecardPage() {
   const [scorecard, setScorecard] = useState<ScorecardData | null>(null);
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const pendingSaveHandled = useRef(false);
+
+  const saveScorecard = useCallback(
+    async (scorecardData: ScorecardData) => {
+      const stored = sessionStorage.getItem("interviewData");
+      if (!stored) return false;
+
+      const interviewData = JSON.parse(stored);
+      setSaving(true);
+
+      try {
+        const res = await fetch("/api/scorecard", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            interview: {
+              role: interviewData.role,
+              job_description: interviewData.job_description,
+              cv_summary: interviewData.cv_summary,
+              weak_area: interviewData.weak_area,
+              difficulty: interviewData.difficulty,
+              questions: interviewData.questions,
+              answers: interviewData.answers,
+            },
+            scorecard: scorecardData,
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Failed to save");
+        }
+
+        sessionStorage.removeItem("interviewData");
+        sessionStorage.removeItem("interviewSetup");
+        sessionStorage.removeItem("pendingSave");
+        return true;
+      } catch (err) {
+        console.error("Save failed:", err);
+        setSaving(false);
+        return false;
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     const stored = sessionStorage.getItem("interviewData");
@@ -62,19 +109,55 @@ export default function ScorecardPage() {
       body: JSON.stringify({ action: "evaluate", ...data }),
     })
       .then((res) => res.json())
-      .then((result) => {
+      .then(async (result) => {
         if (result.overall_score !== undefined) {
           setScorecard(result);
+          setLoading(false);
+
+          // Handle pending save after returning from login/signup
+          const pendingSave = sessionStorage.getItem("pendingSave");
+          if (pendingSave && !pendingSaveHandled.current) {
+            pendingSaveHandled.current = true;
+            const {
+              data: { user },
+            } = await supabase.auth.getUser();
+            if (user) {
+              const saved = await saveScorecard(result);
+              if (saved) {
+                router.push("/dashboard");
+              }
+            } else {
+              sessionStorage.removeItem("pendingSave");
+            }
+          }
         } else {
           setError("Failed to generate scorecard. Please try again.");
+          setLoading(false);
         }
-        setLoading(false);
       })
       .catch(() => {
         setError("Failed to generate scorecard. Please try again.");
         setLoading(false);
       });
-  }, [router]);
+  }, [router, saveScorecard]);
+
+  const handleSaveClick = async () => {
+    if (!scorecard) return;
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      const saved = await saveScorecard(scorecard);
+      if (saved) {
+        router.push("/dashboard");
+      }
+    } else {
+      sessionStorage.setItem("pendingSave", "true");
+      router.push("/login");
+    }
+  };
 
   if (loading) {
     return (
@@ -219,9 +302,13 @@ export default function ScorecardPage() {
           >
             New Role
           </Button>
-          <Link href="/login">
-            <Button variant="secondary">Save Scorecard</Button>
-          </Link>
+          <Button
+            variant="secondary"
+            onClick={handleSaveClick}
+            loading={saving}
+          >
+            Save Scorecard
+          </Button>
         </div>
       </div>
     </div>

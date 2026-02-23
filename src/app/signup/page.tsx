@@ -28,7 +28,8 @@ export default function SignupPage() {
       setError(error.message);
       setLoading(false);
     } else {
-      router.push("/dashboard");
+      const pendingSave = sessionStorage.getItem("pendingSave");
+      router.push(pendingSave ? "/scorecard" : "/dashboard");
     }
   };
 

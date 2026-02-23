@@ -21,14 +21,9 @@ export default function LandingPage() {
             across four dimensions. Detailed feedback that actually helps you
             improve.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-4">
+          <div className="mt-10 flex items-center justify-center">
             <Link href="/setup">
-              <Button size="lg">Start Practising Free</Button>
-            </Link>
-            <Link href="/pricing">
-              <Button variant="secondary" size="lg">
-                View Pricing
-              </Button>
+              <Button size="lg">Start Your First Interview</Button>
             </Link>
           </div>
         </div>
@@ -223,7 +218,7 @@ export default function LandingPage() {
                 "Unlimited interviews",
                 "CV-personalised questions",
                 "Full score history & progress",
-                "Streak tracking",
+                "Score trend over time",
                 "Priority question depth",
               ].map((f, i) => (
                 <li
@@ -254,7 +249,7 @@ export default function LandingPage() {
           </p>
           <Link href="/setup">
             <Button variant="accent" size="lg">
-              Start Practising Free
+              Start Your First Interview
             </Button>
           </Link>
         </div>

@@ -9,21 +9,22 @@ export default function ProgressBar({
   total,
   className = "",
 }: ProgressBarProps) {
-  const percentage = (current / total) * 100;
-
   return (
     <div className={`w-full ${className}`}>
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex justify-between items-center mb-3">
         <span className="label-tag">
-          Step {current} of {total}
+          {current} of {total}
         </span>
-        <span className="label-tag">{Math.round(percentage)}%</span>
       </div>
-      <div className="w-full h-1 bg-border rounded-full overflow-hidden">
-        <div
-          className="h-full bg-accent rounded-full transition-all duration-500 ease-out"
-          style={{ width: `${percentage}%` }}
-        />
+      <div className="flex gap-2">
+        {Array.from({ length: total }, (_, i) => (
+          <div
+            key={i}
+            className={`h-1 flex-1 rounded-full transition-all duration-500 ease-out ${
+              i < current ? "bg-accent" : "bg-border"
+            }`}
+          />
+        ))}
       </div>
     </div>
   );

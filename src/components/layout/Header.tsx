@@ -31,7 +31,7 @@ export default function Header({ showAuth = true }: HeaderProps) {
                 Log in
               </Link>
               <Link href="/setup">
-                <Button size="sm">Start Practising Free</Button>
+                <Button size="sm">Start Your First Interview</Button>
               </Link>
             </>
           )}

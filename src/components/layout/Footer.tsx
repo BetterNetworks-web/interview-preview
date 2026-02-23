@@ -23,7 +23,7 @@ export default function Footer() {
                   href="/setup"
                   className="text-sm text-ink-secondary hover:text-ink transition-colors"
                 >
-                  Start Practising
+                  Start Your First Interview
                 </Link>
               </li>
               <li>

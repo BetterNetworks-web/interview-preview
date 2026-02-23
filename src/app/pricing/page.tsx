@@ -128,9 +128,9 @@ export default function PricingPage() {
                   description: "See every past scorecard and your score trend",
                 },
                 {
-                  feature: "Streak tracking",
+                  feature: "Score trend over time",
                   description:
-                    "Build a daily practice habit with streak counting",
+                    "See how your scores improve across every interview",
                 },
                 {
                   feature: "Priority question depth",

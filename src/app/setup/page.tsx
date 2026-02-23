@@ -9,24 +9,28 @@ const DIFFICULTIES = [
   {
     id: "comfortable",
     label: "Comfortable",
+    icon: "~",
     description:
       "Supportive tone, lighter follow-up pressure. Good for building confidence.",
   },
   {
     id: "realistic",
     label: "Realistic",
+    icon: "=",
     description:
       "Standard interview pace and pressure. What most real interviews feel like.",
   },
   {
     id: "hard",
     label: "Hard",
+    icon: "!",
     description:
       "Follow-up questions and pushback on vague answers. Expect to be challenged.",
   },
   {
     id: "brutal",
     label: "Brutal",
+    icon: "!!",
     description:
       "Aggressive follow-ups, no concessions, catches deflections. The toughest prep available.",
   },
@@ -35,35 +39,41 @@ const DIFFICULTIES = [
 const STEPS = [
   {
     question: "What role are you interviewing for?",
+    subtitle: "We'll tailor every question to this position.",
     placeholder: "e.g. Senior Product Manager, Software Engineer, Data Analyst",
     type: "input" as const,
     field: "role",
   },
   {
-    question:
-      "Paste the job description or describe the key requirements",
+    question: "Paste the job description",
+    subtitle:
+      "The more detail you give, the sharper the questions. Include key requirements and responsibilities.",
     placeholder:
       "Paste the full job description here, or describe the main responsibilities and requirements...",
     type: "textarea" as const,
     field: "jobDescription",
   },
   {
-    question: "Paste your CV or summarise your experience",
+    question: "Now, paste your CV or summarise your experience",
+    subtitle:
+      "This lets us probe your actual background — not generic questions.",
     placeholder:
       "Paste your CV text here, or write a summary of your relevant experience, skills, and accomplishments...",
     type: "textarea" as const,
     field: "cvSummary",
   },
   {
-    question:
-      "What is your biggest weak area going into this interview?",
+    question: "What's your biggest weak spot?",
+    subtitle:
+      "We'll push harder here so you're ready when it matters.",
     placeholder:
       "e.g. I struggle with behavioural questions, I lack experience in X, I tend to ramble...",
     type: "input" as const,
     field: "weakArea",
   },
   {
-    question: "Choose your difficulty",
+    question: "How tough do you want it?",
+    subtitle: "You can always change this next time.",
     type: "difficulty" as const,
     field: "difficulty",
   },
@@ -136,9 +146,16 @@ export default function SetupPage() {
           )}
 
           {/* Question */}
-          <h1 className="font-display text-3xl md:text-4xl font-semibold text-ink mb-8 leading-tight">
+          <h1 className="font-display text-3xl md:text-4xl font-semibold text-ink mb-3 leading-tight">
             {currentStep.question}
           </h1>
+
+          {/* Subtitle */}
+          {"subtitle" in currentStep && currentStep.subtitle && (
+            <p className="text-ink-secondary text-base mb-8 leading-relaxed">
+              {currentStep.subtitle}
+            </p>
+          )}
 
           {/* Input */}
           {currentStep.type === "input" && (
@@ -182,16 +199,27 @@ export default function SetupPage() {
                   onClick={() =>
                     setFormData({ ...formData, difficulty: d.id })
                   }
-                  className={`text-left p-5 rounded-card border transition-all duration-200 ${
+                  className={`text-left p-5 rounded-card border-2 transition-all duration-200 group ${
                     formData.difficulty === d.id
-                      ? "border-accent bg-accent/5 shadow-warm"
-                      : "border-border bg-paper hover:border-ink-secondary/30"
+                      ? "border-accent bg-accent/5 shadow-warm-lg"
+                      : "border-border bg-paper hover:border-ink-secondary/30 hover:shadow-warm"
                   }`}
                 >
-                  <p className="font-body font-medium text-ink mb-1">
-                    {d.label}
-                  </p>
-                  <p className="text-sm text-ink-secondary leading-relaxed">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span
+                      className={`font-mono text-xs font-medium w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
+                        formData.difficulty === d.id
+                          ? "bg-accent text-parchment"
+                          : "bg-border text-ink-secondary group-hover:bg-ink-secondary/20"
+                      }`}
+                    >
+                      {d.icon}
+                    </span>
+                    <p className="font-body font-medium text-ink">
+                      {d.label}
+                    </p>
+                  </div>
+                  <p className="text-sm text-ink-secondary leading-relaxed pl-10">
                     {d.description}
                   </p>
                 </button>
@@ -200,7 +228,7 @@ export default function SetupPage() {
           )}
 
           {/* Continue */}
-          <div className="mt-10">
+          <div className="mt-10 flex items-center gap-4">
             <Button
               size="lg"
               onClick={handleContinue}
@@ -209,6 +237,11 @@ export default function SetupPage() {
             >
               {isLastStep ? "Start Interview" : "Continue"}
             </Button>
+            {currentStep.type === "input" && canContinue && (
+              <span className="text-xs text-ink-secondary/60 font-mono hidden sm:inline">
+                press Enter
+              </span>
+            )}
           </div>
         </div>
       </div>
