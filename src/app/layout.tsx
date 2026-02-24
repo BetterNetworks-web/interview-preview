@@ -23,9 +23,9 @@ const dmMono = DM_Mono({
 
 export const metadata: Metadata = {
   title:
-    "InterviewPreview — AI Mock Interview Practice & Interview Coaching Tool",
+    "Practice Interview Online | Free AI Mock Interview Tool - InterviewPreview",
   description:
-    "Practice interviews with AI-powered mock interview coaching. Get real questions tailored to your role, honest scoring across four dimensions, and detailed feedback that helps you improve. Start your mock interview free.",
+    "Practice mock interviews with AI and get instant feedback. Realistic questions for your role, scored across 4 dimensions. Try your first practice interview free.",
   metadataBase: new URL("https://interviewpreview.com"),
 };
 
