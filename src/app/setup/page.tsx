@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import ProgressBar from "@/components/ui/ProgressBar";
 import { supabase } from "@/lib/supabase";
+import * as gtag from "@/lib/gtag";
 
 const INTERVIEW_TYPES = [
   {
@@ -145,6 +146,11 @@ export default function SetupPage() {
   const handleContinue = async () => {
     if (isLastStep) {
       sessionStorage.setItem("interviewSetup", JSON.stringify(formData));
+      gtag.event("interview_setup_complete", {
+        role: formData.role,
+        interview_type: formData.interviewType,
+        difficulty: formData.difficulty,
+      });
       const { data: { session } } = await supabase.auth.getSession();
       router.push(session ? "/interview" : "/signup");
     } else {

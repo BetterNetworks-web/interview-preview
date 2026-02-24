@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import * as gtag from "@/lib/gtag";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 
@@ -35,6 +36,7 @@ export default function SignupPage() {
       setError(error.message);
       setLoading(false);
     } else {
+      gtag.event("sign_up", { method: "email" });
       setShowVerification(true);
       setLoading(false);
     }

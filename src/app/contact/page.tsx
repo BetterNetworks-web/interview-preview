@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import * as gtag from "@/lib/gtag";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
@@ -27,6 +28,7 @@ export default function ContactPage() {
       });
 
       if (!res.ok) throw new Error();
+      gtag.event("contact_form_submitted");
       setStatus("sent");
       setName("");
       setEmail("");

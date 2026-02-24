@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase";
+import * as gtag from "@/lib/gtag";
 
 const INTERVIEW_TYPE_LABELS: Record<string, string> = {
   behavioral: "Behavioral",
@@ -61,6 +62,10 @@ export default function InterviewPage() {
         .then((data) => {
           if (data.questions) {
             setQuestions(data.questions);
+            gtag.event("interview_started", {
+              role: data.role,
+              difficulty: data.difficulty,
+            });
           } else {
             setError("Failed to generate questions. Please try again.");
           }
@@ -105,6 +110,7 @@ export default function InterviewPage() {
         setCurrentIndex(currentIndex + 1);
       } else {
         // Interview complete
+        gtag.event("interview_completed", { role: setup.role, difficulty: setup.difficulty });
         sessionStorage.setItem(
           "interviewData",
           JSON.stringify({
@@ -154,6 +160,7 @@ export default function InterviewPage() {
       setCurrentIndex(currentIndex + 1);
     } else {
       // Interview complete
+      gtag.event("interview_completed", { role: setup.role, difficulty: setup.difficulty });
       sessionStorage.setItem(
         "interviewData",
         JSON.stringify({

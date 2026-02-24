@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { supabase } from "@/lib/supabase";
+import * as gtag from "@/lib/gtag";
 
 export default function PricingPage() {
   const handleCheckout = async () => {
@@ -28,6 +29,7 @@ export default function PricingPage() {
       });
       const { url } = await res.json();
       if (url) {
+        gtag.event("begin_checkout", { currency: "USD", value: 9.99 });
         window.location.href = url;
       }
     } catch {

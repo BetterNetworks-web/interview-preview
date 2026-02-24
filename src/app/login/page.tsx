@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import * as gtag from "@/lib/gtag";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 
@@ -28,6 +29,7 @@ export default function LoginPage() {
       setError(error.message);
       setLoading(false);
     } else {
+      gtag.event("login", { method: "email" });
       const interviewSetup = sessionStorage.getItem("interviewSetup");
       const pendingSave = sessionStorage.getItem("pendingSave");
 

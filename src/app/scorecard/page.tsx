@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import * as gtag from "@/lib/gtag";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import ScoreBar from "@/components/ui/ScoreBar";
@@ -128,6 +129,7 @@ export default function ScorecardPage() {
       .then(async (result) => {
         if (result.overall_score !== undefined) {
           setScorecard(result);
+          gtag.event("scorecard_viewed", { overall_score: result.overall_score });
           setLoading(false);
 
           // Handle pending save after returning from login/signup
@@ -167,6 +169,7 @@ export default function ScorecardPage() {
     if (user) {
       const saved = await saveScorecard(scorecard);
       if (saved) {
+        gtag.event("scorecard_saved", { overall_score: scorecard.overall_score });
         router.push("/dashboard");
       }
     } else {
