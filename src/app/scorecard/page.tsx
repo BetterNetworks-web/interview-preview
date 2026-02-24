@@ -89,7 +89,8 @@ export default function ScorecardPage() {
 
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.error || "Failed to save");
+          console.error("Save API error:", data);
+          throw new Error(data.details || data.error || "Failed to save");
         }
 
         sessionStorage.removeItem("interviewData");

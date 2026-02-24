@@ -56,9 +56,9 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (interviewError) {
-      console.error("Failed to insert interview:", interviewError);
+      console.error("Failed to insert interview:", JSON.stringify(interviewError));
       return NextResponse.json(
-        { error: "Failed to save interview" },
+        { error: "Failed to save interview", details: interviewError.message, code: interviewError.code },
         { status: 500 }
       );
     }
