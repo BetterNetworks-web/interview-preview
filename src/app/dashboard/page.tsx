@@ -97,7 +97,7 @@ export default function DashboardPage() {
       setScorecards((cards as unknown as ScorecardRecord[]) || []);
 
       // Calculate streak
-      if (userIsPro && cards && cards.length > 0) {
+      if (cards && cards.length > 0) {
         let currentStreak = 0;
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -184,28 +184,71 @@ export default function DashboardPage() {
             </p>
           </Card>
           <Card padding="md">
-            <p className="label-tag mb-2">
-              {isPro ? "Current Streak" : "Streak (Pro)"}
-            </p>
+            <p className="label-tag mb-2">Current Streak</p>
             <p className="font-display text-3xl font-semibold text-ink">
-              {isPro ? (
-                <>
-                  {streak}{" "}
-                  <span className="text-lg text-ink-secondary">
-                    {streak === 1 ? "day" : "days"}
-                  </span>
-                </>
-              ) : (
-                <Link
-                  href="/pricing"
-                  className="text-accent text-lg hover:underline"
-                >
-                  Upgrade
-                </Link>
-              )}
+              {streak}{" "}
+              <span className="text-lg text-ink-secondary">
+                {streak === 1 ? "day" : "days"}
+              </span>
             </p>
           </Card>
         </div>
+
+        {/* Improvement Badges */}
+        {scorecards.length >= 1 && (() => {
+          const badges: { label: string }[] = [];
+
+          // Streak badge — show for everyone
+          if (streak > 0) {
+            badges.push({ label: `${streak} day streak` });
+          }
+
+          // Personal best badge
+          if (scorecards.length >= 2) {
+            const best = Math.max(...scorecards.map((s) => s.overall_score));
+            if (scorecards[0].overall_score === best) {
+              badges.push({ label: "Personal best!" });
+            }
+          }
+
+          // Month-over-month improvement
+          if (scorecards.length >= 2) {
+            const now = new Date();
+            const thisMonth = scorecards.filter((s) => {
+              const d = new Date(s.created_at);
+              return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            });
+            const lastMonth = scorecards.filter((s) => {
+              const d = new Date(s.created_at);
+              const lm = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+              return d.getMonth() === lm.getMonth() && d.getFullYear() === lm.getFullYear();
+            });
+
+            if (thisMonth.length > 0 && lastMonth.length > 0) {
+              const thisAvg = Math.round(thisMonth.reduce((a, b) => a + b.overall_score, 0) / thisMonth.length);
+              const lastAvg = Math.round(lastMonth.reduce((a, b) => a + b.overall_score, 0) / lastMonth.length);
+              const diff = thisAvg - lastAvg;
+              if (diff > 0) {
+                badges.push({ label: `Up ${diff}% this month` });
+              }
+            }
+          }
+
+          if (badges.length === 0) return null;
+
+          return (
+            <div className="flex flex-wrap gap-2 mb-12">
+              {badges.map((b, i) => (
+                <span
+                  key={i}
+                  className="inline-flex items-center px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium"
+                >
+                  {b.label}
+                </span>
+              ))}
+            </div>
+          );
+        })()}
 
         {/* Score History Chart */}
         {scorecards.length > 1 && (
@@ -239,6 +282,64 @@ export default function DashboardPage() {
             </div>
           </Card>
         )}
+
+        {/* Dimension Trends */}
+        {scorecards.length >= 3 && (() => {
+          const cardsWithDims = [...scorecards].filter((s) => s.dimensions).reverse().slice(-10);
+          if (cardsWithDims.length < 3) return null;
+
+          const dimKeys = ["evidence_specificity", "handling_pressure", "self_awareness", "strategic_thinking"] as const;
+
+          return (
+            <Card padding="lg" className="mb-12">
+              <h3 className="font-display text-lg font-semibold mb-6">
+                Dimension Trends
+              </h3>
+              <div className="space-y-4">
+                {dimKeys.map((key) => {
+                  const scores = cardsWithDims.map((s) => s.dimensions![key].score);
+                  const first = scores[0];
+                  const last = scores[scores.length - 1];
+                  const diff = last - first;
+                  const maxScore = Math.max(...scores, 1);
+
+                  return (
+                    <div key={key} className="flex items-center gap-4">
+                      <p className="text-sm text-ink font-medium w-40 shrink-0">
+                        {DIMENSION_LABELS[key]}
+                      </p>
+                      <div className="flex-1 flex items-center gap-1">
+                        {scores.map((score, i) => (
+                          <div
+                            key={i}
+                            className="flex-1 bg-accent/20 rounded-sm overflow-hidden"
+                            style={{ height: "24px" }}
+                          >
+                            <div
+                              className="h-full bg-accent rounded-sm"
+                              style={{ height: `${(score / maxScore) * 100}%` }}
+                              title={`${score}`}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <span
+                        className={`font-mono text-xs w-14 text-right shrink-0 ${
+                          diff > 0 ? "text-green-600" : diff < 0 ? "text-red-500" : "text-ink-secondary"
+                        }`}
+                      >
+                        {diff > 0 ? "+" : ""}{diff}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-ink-secondary/60 mt-4">
+                Last {cardsWithDims.length} interviews, oldest to newest
+              </p>
+            </Card>
+          );
+        })()}
 
         {/* Analytics Section — shown with 2+ interviews */}
         {scorecards.length >= 2 && (() => {
@@ -298,6 +399,60 @@ export default function DashboardPage() {
                   </p>
                 </Card>
               </div>
+
+              {/* Focus Areas — dimensions that scored below 50 */}
+              {(() => {
+                const dimFrequency: Record<string, { below: number; total: number }> = {};
+                dimKeys.forEach((key) => {
+                  dimFrequency[key] = { below: 0, total: 0 };
+                });
+                cardsWithDimensions.forEach((s) => {
+                  dimKeys.forEach((key) => {
+                    dimFrequency[key].total++;
+                    if (s.dimensions![key].score < 50) {
+                      dimFrequency[key].below++;
+                    }
+                  });
+                });
+
+                const flagged = dimKeys
+                  .filter((key) => dimFrequency[key].below >= 2)
+                  .sort((a, b) => dimFrequency[b].below - dimFrequency[a].below);
+
+                if (flagged.length === 0) return null;
+
+                return (
+                  <Card padding="lg">
+                    <h4 className="font-display text-base font-semibold mb-4">
+                      Focus Areas
+                    </h4>
+                    <div className="space-y-3">
+                      {flagged.map((key) => {
+                        const { below, total } = dimFrequency[key];
+                        const pct = Math.round((below / total) * 100);
+                        return (
+                          <div key={key} className="flex items-center gap-3">
+                            <div className="flex-1">
+                              <p className="text-sm text-ink font-medium">
+                                {DIMENSION_LABELS[key]}
+                              </p>
+                              <p className="text-xs text-ink-secondary">
+                                Scored below 50 in {below} of {total} interviews
+                              </p>
+                            </div>
+                            <div className="w-16 h-2 bg-border rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-red-400 rounded-full"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </Card>
+                );
+              })()}
 
               {/* Common Themes to Fix */}
               {recentFixes.length > 0 && (

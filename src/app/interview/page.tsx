@@ -4,11 +4,19 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 
+const INTERVIEW_TYPE_LABELS: Record<string, string> = {
+  behavioral: "Behavioral",
+  technical: "Technical",
+  situational: "Situational",
+  case_study: "Case Study",
+};
+
 interface SetupData {
   role: string;
   jobDescription: string;
   cvSummary: string;
   weakArea: string;
+  interviewType?: string;
   difficulty: string;
 }
 
@@ -188,7 +196,12 @@ export default function InterviewPage() {
       {/* Top Bar */}
       <div className="border-b border-border bg-parchment/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="section-container flex items-center justify-between h-14">
-          <span className="label-tag">{setup?.role}</span>
+          <div className="flex items-center gap-2">
+            <span className="label-tag">{setup?.role}</span>
+            {setup?.interviewType && setup.interviewType !== "general" && (
+              <span className="label-tag">{INTERVIEW_TYPE_LABELS[setup.interviewType] || setup.interviewType}</span>
+            )}
+          </div>
           <div className="flex items-center gap-6">
             <span className="label-tag">
               Question {currentIndex + 1} of {questions.length}

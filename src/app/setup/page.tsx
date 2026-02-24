@@ -5,6 +5,44 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import ProgressBar from "@/components/ui/ProgressBar";
 
+const INTERVIEW_TYPES = [
+  {
+    id: "general",
+    label: "General",
+    icon: "G",
+    description:
+      "A balanced mix of behavioural, situational, and role-specific questions.",
+  },
+  {
+    id: "behavioral",
+    label: "Behavioral",
+    icon: "B",
+    description:
+      "Focus on past experiences using the STAR method. 'Tell me about a time...' style questions.",
+  },
+  {
+    id: "technical",
+    label: "Technical",
+    icon: "T",
+    description:
+      "Deep-dive into role-specific technical knowledge and problem-solving.",
+  },
+  {
+    id: "situational",
+    label: "Situational",
+    icon: "S",
+    description:
+      "Hypothetical scenarios testing your judgment and decision-making.",
+  },
+  {
+    id: "case_study",
+    label: "Case Study",
+    icon: "C",
+    description:
+      "Problem-solving exercises where you walk through a business challenge.",
+  },
+];
+
 const DIFFICULTIES = [
   {
     id: "comfortable",
@@ -72,6 +110,13 @@ const STEPS = [
     field: "weakArea",
   },
   {
+    question: "What type of interview?",
+    subtitle:
+      "General covers everything. Pick a focus if you want to target a specific style.",
+    type: "interviewType" as const,
+    field: "interviewType",
+  },
+  {
     question: "How tough do you want it?",
     subtitle: "You can always change this next time.",
     type: "difficulty" as const,
@@ -87,6 +132,7 @@ export default function SetupPage() {
     jobDescription: "",
     cvSummary: "",
     weakArea: "",
+    interviewType: "general",
     difficulty: "",
   });
 
@@ -189,6 +235,42 @@ export default function SetupPage() {
               }
               autoFocus
             />
+          )}
+
+          {currentStep.type === "interviewType" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {INTERVIEW_TYPES.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() =>
+                    setFormData({ ...formData, interviewType: t.id })
+                  }
+                  className={`text-left p-5 rounded-card border-2 transition-all duration-200 group ${
+                    formData.interviewType === t.id
+                      ? "border-accent bg-accent/5 shadow-warm-lg"
+                      : "border-border bg-paper hover:border-ink-secondary/30 hover:shadow-warm"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <span
+                      className={`font-mono text-xs font-medium w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
+                        formData.interviewType === t.id
+                          ? "bg-accent text-parchment"
+                          : "bg-border text-ink-secondary group-hover:bg-ink-secondary/20"
+                      }`}
+                    >
+                      {t.icon}
+                    </span>
+                    <p className="font-body font-medium text-ink">
+                      {t.label}
+                    </p>
+                  </div>
+                  <p className="text-sm text-ink-secondary leading-relaxed pl-10">
+                    {t.description}
+                  </p>
+                </button>
+              ))}
+            </div>
           )}
 
           {currentStep.type === "difficulty" && (

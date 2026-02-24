@@ -31,9 +31,10 @@ async function generateQuestions(body: {
   jobDescription: string;
   cvSummary: string;
   weakArea: string;
+  interviewType?: string;
   difficulty: string;
 }) {
-  const { role, jobDescription, cvSummary, weakArea, difficulty } = body;
+  const { role, jobDescription, cvSummary, weakArea, interviewType, difficulty } = body;
 
   const difficultyInstruction = {
     comfortable:
@@ -44,6 +45,18 @@ async function generateQuestions(body: {
     brutal:
       "Ask the hardest possible questions for this role. Include questions designed to expose gaps, test under pressure, and require extremely specific answers. Every question should be challenging.",
   }[difficulty];
+
+  const interviewTypeInstruction = {
+    general: "",
+    behavioral:
+      "Focus at least 6 of 8 questions on behavioural format ('Tell me about a time...'). Expect STAR-method answers.",
+    technical:
+      "Focus at least 6 of 8 questions on technical depth, domain knowledge, and problem-solving for this role.",
+    situational:
+      "Focus at least 6 of 8 questions on hypothetical scenarios ('How would you handle...').",
+    case_study:
+      "Structure the interview as a progressive case study. Present a business problem and ask the candidate to work through it step by step across the 8 questions.",
+  }[interviewType || "general"] || "";
 
   const message = await getAnthropicClient().messages.create({
     model: "claude-sonnet-4-20250514",
@@ -60,7 +73,7 @@ Self-identified Weak Area: ${weakArea}
 Difficulty: ${difficulty}
 
 ${difficultyInstruction}
-
+${interviewTypeInstruction ? `\n${interviewTypeInstruction}\n` : ""}
 Generate exactly 8 interview questions as a JSON array. Questions should be a mix of:
 - Behavioural ("Tell me about a time...")
 - Situational ("How would you handle...")
@@ -136,6 +149,8 @@ ${transcript}
 
 Evaluate the candidate honestly. An average answer should score 55-65, not 80. Reserve 80+ for genuinely strong answers with specific examples, numbers, and clear strategic thinking.
 
+For each question, also include a "tip" field: a 2-3 sentence coaching insight that teaches the candidate HOW to answer this type of question better. Reference a specific framework or technique (like STAR, the Pyramid Principle, or structured problem-solving). Make it educational, not just critical.
+
 Return ONLY valid JSON in this exact format:
 {
   "overall_score": <0-100>,
@@ -147,8 +162,9 @@ Return ONLY valid JSON in this exact format:
     "strategic_thinking": {"score": <0-100>, "feedback": "<2-3 sentences referencing specific things they said>"}
   },
   "one_thing_to_fix": "<single specific actionable sentence — the most important improvement>",
+  "fix_explanation": "<3-4 sentence explanation of WHY this matters and HOW to practice it>",
   "question_breakdown": [
-    {"question": "<question text>", "answer_summary": "<1-2 sentence summary of their answer>", "score": <0-100>, "note": "<one sentence of specific feedback>"}
+    {"question": "<question text>", "answer_summary": "<1-2 sentence summary of their answer>", "score": <0-100>, "note": "<one sentence of specific feedback>", "tip": "<2-3 sentence coaching tip for this question type>"}
   ]
 }`,
       },

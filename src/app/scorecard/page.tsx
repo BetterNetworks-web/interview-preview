@@ -18,6 +18,7 @@ interface QuestionResult {
   answer_summary: string;
   score: number;
   note: string;
+  tip?: string;
 }
 
 interface ScorecardData {
@@ -30,6 +31,7 @@ interface ScorecardData {
     strategic_thinking: Dimension;
   };
   one_thing_to_fix: string;
+  fix_explanation?: string;
   question_breakdown: QuestionResult[];
 }
 
@@ -47,6 +49,7 @@ export default function ScorecardPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [expandedTips, setExpandedTips] = useState<Set<number>>(new Set());
   const pendingSaveHandled = useRef(false);
 
   const saveScorecard = useCallback(
@@ -266,6 +269,11 @@ export default function ScorecardPage() {
             <p className="font-display text-xl text-ink leading-relaxed">
               {scorecard.one_thing_to_fix}
             </p>
+            {scorecard.fix_explanation && (
+              <p className="text-sm text-ink-secondary leading-relaxed mt-4">
+                {scorecard.fix_explanation}
+              </p>
+            )}
           </div>
         </div>
 
@@ -290,6 +298,34 @@ export default function ScorecardPage() {
                   {qb.answer_summary}
                 </p>
                 <p className="text-sm text-ink-secondary">{qb.note}</p>
+                {qb.tip && (
+                  <div className="mt-3">
+                    <button
+                      onClick={() => {
+                        const next = new Set(expandedTips);
+                        if (next.has(i)) {
+                          next.delete(i);
+                        } else {
+                          next.add(i);
+                        }
+                        setExpandedTips(next);
+                      }}
+                      className="text-xs text-accent hover:text-accent/80 font-medium transition-colors"
+                    >
+                      {expandedTips.has(i) ? "Hide tip" : "Show tip"}
+                    </button>
+                    {expandedTips.has(i) && (
+                      <div className="mt-2 bg-accent/5 border border-accent/10 rounded-lg p-4">
+                        <p className="font-mono text-[10px] text-accent tracking-widest uppercase mb-2">
+                          Tip
+                        </p>
+                        <p className="text-sm text-ink-secondary leading-relaxed">
+                          {qb.tip}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </Card>
             ))}
           </div>
