@@ -6,19 +6,39 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import ScoreBar from "@/components/ui/ScoreBar";
 import Header from "@/components/layout/Header";
 import { formatDate } from "@/lib/utils";
+
+interface Dimension {
+  score: number;
+  feedback: string;
+}
 
 interface ScorecardRecord {
   id: string;
   overall_score: number;
   verdict: string;
   created_at: string;
+  dimensions: {
+    evidence_specificity: Dimension;
+    handling_pressure: Dimension;
+    self_awareness: Dimension;
+    strategic_thinking: Dimension;
+  } | null;
+  one_thing_to_fix: string | null;
   interviews: {
     role: string;
     difficulty: string;
   };
 }
+
+const DIMENSION_LABELS: Record<string, string> = {
+  evidence_specificity: "Evidence & Specificity",
+  handling_pressure: "Handling Pressure",
+  self_awareness: "Self-Awareness",
+  strategic_thinking: "Strategic Thinking",
+};
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -60,6 +80,8 @@ export default function DashboardPage() {
           id,
           overall_score,
           verdict,
+          dimensions,
+          one_thing_to_fix,
           created_at,
           interviews (role, difficulty)
         `
@@ -217,6 +239,85 @@ export default function DashboardPage() {
             </div>
           </Card>
         )}
+
+        {/* Analytics Section — shown with 2+ interviews */}
+        {scorecards.length >= 2 && (() => {
+          const cardsWithDimensions = scorecards.filter((s) => s.dimensions);
+          if (cardsWithDimensions.length < 2) return null;
+
+          const dimKeys = ["evidence_specificity", "handling_pressure", "self_awareness", "strategic_thinking"] as const;
+          const dimAverages = dimKeys.map((key) => {
+            const scores = cardsWithDimensions.map((s) => s.dimensions![key].score);
+            const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+            return { key, label: DIMENSION_LABELS[key], avg };
+          });
+
+          const sorted = [...dimAverages].sort((a, b) => b.avg - a.avg);
+          const strongest = sorted[0];
+          const weakest = sorted[sorted.length - 1];
+
+          const recentFixes = scorecards
+            .filter((s) => s.one_thing_to_fix)
+            .slice(0, 5)
+            .map((s) => s.one_thing_to_fix!);
+
+          return (
+            <div className="mb-12 space-y-8">
+              <h3 className="font-display text-lg font-semibold">
+                Performance Analytics
+              </h3>
+
+              {/* Dimension Averages */}
+              <Card padding="lg">
+                <h4 className="font-display text-base font-semibold mb-6">
+                  Dimension Averages
+                </h4>
+                {dimAverages.map((d) => (
+                  <ScoreBar key={d.key} label={d.label} score={d.avg} />
+                ))}
+              </Card>
+
+              {/* Strengths & Weaknesses */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card padding="md">
+                  <p className="label-tag mb-2">Strongest Area</p>
+                  <p className="font-display text-xl font-semibold text-ink mb-1">
+                    {strongest.label}
+                  </p>
+                  <p className="font-mono text-sm text-accent">
+                    {strongest.avg}/100 avg
+                  </p>
+                </Card>
+                <Card padding="md">
+                  <p className="label-tag mb-2">Area to Improve</p>
+                  <p className="font-display text-xl font-semibold text-ink mb-1">
+                    {weakest.label}
+                  </p>
+                  <p className="font-mono text-sm text-ink-secondary">
+                    {weakest.avg}/100 avg
+                  </p>
+                </Card>
+              </div>
+
+              {/* Common Themes to Fix */}
+              {recentFixes.length > 0 && (
+                <Card padding="lg">
+                  <h4 className="font-display text-base font-semibold mb-4">
+                    Common Themes to Fix
+                  </h4>
+                  <ul className="space-y-3">
+                    {recentFixes.map((fix, i) => (
+                      <li key={i} className="flex gap-3 text-sm text-ink-secondary leading-relaxed">
+                        <span className="text-accent mt-0.5 shrink-0">&bull;</span>
+                        {fix}
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Past Scorecards */}
         <h3 className="font-display text-lg font-semibold mb-4">
