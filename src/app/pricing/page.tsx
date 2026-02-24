@@ -192,7 +192,7 @@ export default function PricingPage() {
               },
               {
                 q: "How are the questions generated?",
-                a: "We use Claude AI to generate questions tailored to your specific role, job description, and experience. No two interviews are the same.",
+                a: "We use AI to generate questions tailored to your specific role, job description, and experience. No two interviews are the same.",
               },
               {
                 q: "Is the scoring really honest?",
