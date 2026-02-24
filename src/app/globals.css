@@ -106,3 +106,63 @@
   background: linear-gradient(180deg, #1A1A1A 0%, #2A2520 100%);
   color: #F5F0E8;
 }
+
+/* Blog content styles */
+.blog-content h2 {
+  @apply font-display text-2xl font-bold text-ink mt-10 mb-4;
+}
+
+.blog-content h3 {
+  @apply font-display text-lg font-semibold text-ink mt-8 mb-3;
+}
+
+.blog-content p {
+  @apply text-ink-secondary leading-relaxed mb-4 text-[15px];
+}
+
+.blog-content strong {
+  @apply text-ink font-semibold;
+}
+
+.blog-content a {
+  @apply text-accent underline underline-offset-2 hover:text-accent/80 transition-colors;
+}
+
+.blog-content ul,
+.blog-content ol {
+  @apply mb-4 pl-6 space-y-2;
+}
+
+.blog-content ul {
+  @apply list-disc;
+}
+
+.blog-content ol {
+  @apply list-decimal;
+}
+
+.blog-content li {
+  @apply text-ink-secondary text-[15px] leading-relaxed;
+}
+
+.blog-content li strong {
+  @apply text-ink;
+}
+
+/* Blog CTA callout boxes */
+.blog-cta {
+  @apply bg-paper border border-accent/20 rounded-card p-6 sm:p-8 my-10 text-center;
+}
+
+.blog-cta .blog-cta-title {
+  @apply font-display text-xl font-bold text-ink mb-2;
+}
+
+.blog-cta .blog-cta-text {
+  @apply text-ink-secondary text-sm leading-relaxed mb-4 max-w-lg mx-auto;
+}
+
+.blog-cta .blog-cta-button {
+  @apply inline-block bg-ink text-parchment font-body font-medium px-6 py-3 rounded-btn
+         hover:bg-opacity-90 transition-all duration-200 text-sm tracking-wide no-underline;
+}

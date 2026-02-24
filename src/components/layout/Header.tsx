@@ -42,6 +42,12 @@ export default function Header({ showAuth = true }: HeaderProps) {
           >
             Pricing
           </Link>
+          <Link
+            href="/blog"
+            className="font-body text-sm text-ink-secondary hover:text-ink transition-colors"
+          >
+            Blog
+          </Link>
           {showAuth && (
             <>
               {isLoggedIn ? (

@@ -42,6 +42,14 @@ export default function Footer() {
                   Dashboard
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/blog"
+                  className="text-sm text-ink-secondary hover:text-ink transition-colors"
+                >
+                  Blog
+                </Link>
+              </li>
             </ul>
           </div>
 
