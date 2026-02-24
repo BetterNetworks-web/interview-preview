@@ -207,7 +207,7 @@ export default function LandingPage() {
             <p className="label-tag mb-2">Pro</p>
             <div className="flex items-baseline gap-1 mb-1">
               <span className="font-display text-4xl font-semibold">
-                $9.99
+                $7.99
               </span>
               <span className="text-sm text-ink-secondary">/month</span>
             </div>

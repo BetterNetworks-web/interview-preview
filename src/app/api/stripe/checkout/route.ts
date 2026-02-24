@@ -53,18 +53,11 @@ export async function POST(request: NextRequest) {
       payment_method_types: ["card"],
       line_items: [
         {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: "InterviewPreview Pro",
-              description: "Unlimited interviews, CV-personalised questions, full history",
-            },
-            unit_amount: 999,
-            recurring: { interval: "month" },
-          },
+          price: "price_1T4M7jS7WZEc0WMiVX6pZDRc",
           quantity: 1,
         },
       ],
+      allow_promotion_codes: true,
       success_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://interviewpreview.com"}/dashboard?upgraded=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://interviewpreview.com"}/pricing`,
       metadata: { user_id: user.id },

@@ -29,7 +29,7 @@ export default function PricingPage() {
       });
       const { url } = await res.json();
       if (url) {
-        gtag.event("begin_checkout", { currency: "USD", value: 9.99 });
+        gtag.event("begin_checkout", { currency: "USD", value: 7.99 });
         window.location.href = url;
       }
     } catch {
@@ -119,7 +119,7 @@ export default function PricingPage() {
             <p className="label-tag mb-2">Pro</p>
             <div className="flex items-baseline gap-1 mb-1">
               <span className="font-display text-5xl font-semibold">
-                $9.99
+                $7.99
               </span>
               <span className="text-sm text-ink-secondary">/month</span>
             </div>
@@ -172,7 +172,7 @@ export default function PricingPage() {
             </ul>
 
             <Button className="w-full" onClick={handleCheckout}>
-              Get Pro — $9.99/mo
+              Get Pro — $7.99/mo
             </Button>
           </Card>
         </div>

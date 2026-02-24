@@ -88,7 +88,7 @@ Three actions via `action` field in request body:
 
 ## Business Model
 - **Free**: 3 interviews/month, all difficulties, last 3 visible in dashboard
-- **Pro ($9.99/mo)**: Unlimited interviews, CV personalization, full history, score trends
+- **Pro ($7.99/mo)**: Unlimited interviews, CV personalization, full history, score trends
 
 ## Environment Variables
 ```
