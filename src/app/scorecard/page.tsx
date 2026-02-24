@@ -76,9 +76,9 @@ export default function ScorecardPage() {
           body: JSON.stringify({
             interview: {
               role: interviewData.role,
-              job_description: interviewData.job_description,
-              cv_summary: interviewData.cv_summary,
-              weak_area: interviewData.weak_area,
+              job_description: interviewData.jobDescription,
+              cv_summary: interviewData.cvSummary,
+              weak_area: interviewData.weakArea,
               difficulty: interviewData.difficulty,
               questions: interviewData.questions,
               answers: interviewData.answers,
