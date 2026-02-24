@@ -143,12 +143,12 @@ export default function TermsPage() {
               <p className="text-sm text-ink-secondary leading-relaxed">
                 If you are unsatisfied with your Pro subscription, you may
                 request a refund within 7 days of your initial purchase by
-                contacting us at{" "}
+                contacting us via our{" "}
                 <a
-                  href="mailto:isaac@betternetworks.com.au"
+                  href="/contact"
                   className="text-accent hover:text-accent/80 transition-colors"
                 >
-                  isaac@betternetworks.com.au
+                  contact page
                 </a>
                 . Refunds are not available for subsequent billing cycles after
                 the initial 7-day period.
@@ -253,12 +253,12 @@ export default function TermsPage() {
               </h2>
               <p className="text-sm text-ink-secondary leading-relaxed">
                 If you have any questions about these Terms of Service, please
-                contact us at{" "}
+                contact us via our{" "}
                 <a
-                  href="mailto:isaac@betternetworks.com.au"
+                  href="/contact"
                   className="text-accent hover:text-accent/80 transition-colors"
                 >
-                  isaac@betternetworks.com.au
+                  contact page
                 </a>
                 .
               </p>

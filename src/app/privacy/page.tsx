@@ -169,12 +169,12 @@ export default function PrivacyPage() {
                 </li>
               </ul>
               <p className="text-sm text-ink-secondary leading-relaxed mt-3">
-                To exercise any of these rights, please contact us at{" "}
+                To exercise any of these rights, please contact us via our{" "}
                 <a
-                  href="mailto:isaac@betternetworks.com.au"
+                  href="/contact"
                   className="text-accent hover:text-accent/80 transition-colors"
                 >
-                  isaac@betternetworks.com.au
+                  contact page
                 </a>
                 .
               </p>
@@ -209,12 +209,12 @@ export default function PrivacyPage() {
               </h2>
               <p className="text-sm text-ink-secondary leading-relaxed">
                 If you have any questions about this Privacy Policy, please
-                contact us at{" "}
+                contact us via our{" "}
                 <a
-                  href="mailto:isaac@betternetworks.com.au"
+                  href="/contact"
                   className="text-accent hover:text-accent/80 transition-colors"
                 >
-                  isaac@betternetworks.com.au
+                  contact page
                 </a>
                 .
               </p>
