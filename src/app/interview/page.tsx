@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
+import { supabase } from "@/lib/supabase";
 
 const INTERVIEW_TYPE_LABELS: Record<string, string> = {
   behavioral: "Behavioral",
@@ -34,35 +35,42 @@ export default function InterviewPage() {
   const [timer, setTimer] = useState(0);
   const [error, setError] = useState("");
 
-  // Load setup data and generate questions
+  // Auth check + load setup data and generate questions
   useEffect(() => {
-    const stored = sessionStorage.getItem("interviewSetup");
-    if (!stored) {
-      router.push("/setup");
-      return;
-    }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        router.push("/signup");
+        return;
+      }
 
-    const data: SetupData = JSON.parse(stored);
-    setSetup(data);
+      const stored = sessionStorage.getItem("interviewSetup");
+      if (!stored) {
+        router.push("/setup");
+        return;
+      }
 
-    fetch("/api/interview", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "generate_questions", ...data }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.questions) {
-          setQuestions(data.questions);
-        } else {
-          setError("Failed to generate questions. Please try again.");
-        }
-        setLoading(false);
+      const data: SetupData = JSON.parse(stored);
+      setSetup(data);
+
+      fetch("/api/interview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "generate_questions", ...data }),
       })
-      .catch(() => {
-        setError("Failed to generate questions. Please try again.");
-        setLoading(false);
-      });
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.questions) {
+            setQuestions(data.questions);
+          } else {
+            setError("Failed to generate questions. Please try again.");
+          }
+          setLoading(false);
+        })
+        .catch(() => {
+          setError("Failed to generate questions. Please try again.");
+          setLoading(false);
+        });
+    });
   }, [router]);
 
   // Timer

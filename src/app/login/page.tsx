@@ -28,8 +28,16 @@ export default function LoginPage() {
       setError(error.message);
       setLoading(false);
     } else {
+      const interviewSetup = sessionStorage.getItem("interviewSetup");
       const pendingSave = sessionStorage.getItem("pendingSave");
-      router.push(pendingSave ? "/scorecard" : "/dashboard");
+
+      if (interviewSetup) {
+        router.push("/interview");
+      } else if (pendingSave) {
+        router.push("/scorecard");
+      } else {
+        router.push("/dashboard");
+      }
     }
   };
 

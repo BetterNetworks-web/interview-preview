@@ -1,18 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 
 export default function SignupPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showVerification, setShowVerification] = useState(false);
+
+  const hasSetupData = typeof window !== "undefined" && sessionStorage.getItem("interviewSetup");
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,16 +23,68 @@ export default function SignupPage() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
 
     if (error) {
       setError(error.message);
       setLoading(false);
     } else {
-      const pendingSave = sessionStorage.getItem("pendingSave");
-      router.push(pendingSave ? "/scorecard" : "/dashboard");
+      setShowVerification(true);
+      setLoading(false);
     }
   };
+
+  if (showVerification) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6">
+        <div className="w-full max-w-md animate-fade-in text-center">
+          <div className="text-center mb-8">
+            <Link
+              href="/"
+              className="font-display text-xl font-semibold text-ink"
+            >
+              InterviewPreview
+            </Link>
+          </div>
+
+          <Card padding="lg">
+            <div className="py-4">
+              <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-6">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-accent">
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <path d="M22 4L12 13L2 4" />
+                </svg>
+              </div>
+              <h1 className="font-display text-2xl font-semibold text-ink mb-3">
+                Check your email
+              </h1>
+              <p className="text-sm text-ink-secondary mb-2">
+                We sent a verification link to
+              </p>
+              <p className="text-sm font-medium text-ink mb-6">{email}</p>
+              <p className="text-sm text-ink-secondary">
+                Click the link in your email to verify your account
+                {hasSetupData ? " and start your interview" : ""}.
+              </p>
+            </div>
+          </Card>
+
+          <p className="text-sm text-ink-secondary text-center mt-6">
+            Didn&apos;t receive it? Check your spam folder or{" "}
+            <button
+              onClick={() => setShowVerification(false)}
+              className="text-accent hover:underline"
+            >
+              try again
+            </button>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6">
@@ -47,7 +100,9 @@ export default function SignupPage() {
             Create your account
           </h1>
           <p className="text-sm text-ink-secondary">
-            Save your scorecards and track your progress over time
+            {hasSetupData
+              ? "Sign up to start your interview"
+              : "Save your scorecards and track your progress over time"}
           </p>
         </div>
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import ProgressBar from "@/components/ui/ProgressBar";
+import { supabase } from "@/lib/supabase";
 
 const INTERVIEW_TYPES = [
   {
@@ -141,10 +142,11 @@ export default function SetupPage() {
   const canContinue =
     formData[currentStep.field as keyof typeof formData].trim() !== "";
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (isLastStep) {
       sessionStorage.setItem("interviewSetup", JSON.stringify(formData));
-      router.push("/interview");
+      const { data: { session } } = await supabase.auth.getSession();
+      router.push(session ? "/interview" : "/signup");
     } else {
       setStep(step + 1);
     }
