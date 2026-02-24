@@ -12,14 +12,14 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="section-container pt-24 pb-20">
         <div className="max-w-3xl mx-auto text-center animate-fade-in">
-          <p className="label-tag mb-6">AI-Powered Mock Interviews</p>
+          <p className="label-tag mb-6">AI-Powered Interview Coaching</p>
           <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-ink leading-[1.1] tracking-tight">
-            Practice until the real thing feels easy.
+            Practice interviews until the real thing feels easy.
           </h1>
           <p className="mt-6 text-lg text-ink-secondary max-w-xl mx-auto leading-relaxed">
-            Real interview questions tailored to your role. Honest scoring
-            across four dimensions. Detailed feedback that actually helps you
-            improve.
+            AI mock interview questions tailored to your role. Honest scoring
+            across four dimensions. Interview coaching feedback that actually
+            helps you improve.
           </p>
           <div className="mt-10 flex items-center justify-center">
             <Link href="/setup">
@@ -59,7 +59,7 @@ export default function LandingPage() {
         <div className="text-center mb-16">
           <p className="label-tag mb-4">How It Works</p>
           <h2 className="font-display text-3xl md:text-4xl font-semibold text-ink">
-            Three steps to interview confidence
+            How our mock interview coaching works
           </h2>
         </div>
 
@@ -67,12 +67,13 @@ export default function LandingPage() {
           <Card padding="lg">
             <div className="font-mono text-xs text-accent mb-4">01</div>
             <h3 className="font-display text-xl font-semibold mb-3">
-              Personalised Questions
+              Personalised Mock Interview Questions
             </h3>
             <p className="text-sm text-ink-secondary leading-relaxed">
               Tell us your role, paste the job description, and share your
-              experience. Our AI generates questions tailored specifically to
-              your situation — not generic prompts from a textbook.
+              experience. Our AI generates practice interview questions tailored
+              specifically to your situation — not generic prompts from a
+              textbook.
             </p>
           </Card>
 
@@ -94,7 +95,7 @@ export default function LandingPage() {
               Choose Your Difficulty
             </h3>
             <p className="text-sm text-ink-secondary leading-relaxed">
-              From supportive practice to brutal interrogation. Higher
+              From supportive interview coaching to brutal interrogation. Higher
               difficulties include follow-up questions, pushback on vague
               answers, and no concessions for deflections.
             </p>
@@ -110,7 +111,7 @@ export default function LandingPage() {
               What People Say
             </p>
             <h2 className="font-display text-3xl md:text-4xl font-semibold">
-              Honest practice, real results
+              Practice interview results that speak for themselves
             </h2>
           </div>
 
@@ -241,11 +242,11 @@ export default function LandingPage() {
       <section className="section-container pb-24">
         <div className="dark-section rounded-card p-12 md:p-16 text-center">
           <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
-            Your next interview is coming.
+            Start your mock interview now.
           </h2>
           <p className="text-parchment/70 max-w-md mx-auto mb-8">
-            Stop rehearsing answers in your head. Practice them properly and
-            know exactly where you stand.
+            Stop rehearsing answers in your head. Practice interviews properly
+            and know exactly where you stand.
           </p>
           <Link href="/setup">
             <Button variant="accent" size="lg">

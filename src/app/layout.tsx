@@ -22,9 +22,10 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "InterviewPreview — Practice until the real thing feels easy",
+  title:
+    "InterviewPreview — AI Mock Interview Practice & Interview Coaching Tool",
   description:
-    "AI-powered mock interview practice. Real questions, honest scoring, detailed feedback. Practice until the real thing feels easy.",
+    "Practice interviews with AI-powered mock interview coaching. Get real questions tailored to your role, honest scoring across four dimensions, and detailed feedback that helps you improve. Start your mock interview free.",
   metadataBase: new URL("https://interviewpreview.com"),
 };
 
