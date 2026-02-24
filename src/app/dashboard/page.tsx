@@ -133,11 +133,6 @@ export default function DashboardPage() {
     loadData();
   }, [router]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -148,7 +143,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <Header showAuth={false} />
+      <Header />
       <div className="section-container py-12">
         <div className="flex items-center justify-between mb-12">
           <div>
@@ -157,14 +152,9 @@ export default function DashboardPage() {
             </h1>
             <p className="text-sm text-ink-secondary">{user?.email}</p>
           </div>
-          <div className="flex items-center gap-3">
-            <Link href="/setup">
-              <Button size="sm">New Interview</Button>
-            </Link>
-            <Button size="sm" variant="secondary" onClick={handleLogout}>
-              Log Out
-            </Button>
-          </div>
+          <Link href="/setup">
+            <Button size="sm">New Interview</Button>
+          </Link>
         </div>
 
         {/* Stats Row */}
