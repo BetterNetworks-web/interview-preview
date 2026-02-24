@@ -122,21 +122,6 @@ export default function ContactPage() {
           <div className="space-y-6">
             <Card padding="lg">
               <h3 className="font-display text-lg font-semibold text-ink mb-3">
-                Email us directly
-              </h3>
-              <p className="text-sm text-ink-secondary leading-relaxed mb-3">
-                Prefer email? You can reach us at:
-              </p>
-              <a
-                href="mailto:isaac@betternetworks.com.au"
-                className="text-sm text-accent hover:text-accent/80 transition-colors break-all"
-              >
-                isaac@betternetworks.com.au
-              </a>
-            </Card>
-
-            <Card padding="lg">
-              <h3 className="font-display text-lg font-semibold text-ink mb-3">
                 Response time
               </h3>
               <p className="text-sm text-ink-secondary leading-relaxed">
