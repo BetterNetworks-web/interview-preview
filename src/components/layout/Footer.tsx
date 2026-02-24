@@ -57,17 +57,28 @@ export default function Footer() {
             <h4 className="label-tag mb-4">Legal</h4>
             <ul className="space-y-2">
               <li>
-                <span className="text-sm text-ink-secondary">
+                <Link
+                  href="/privacy"
+                  className="text-sm text-ink-secondary hover:text-ink transition-colors"
+                >
                   Privacy Policy
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="text-sm text-ink-secondary">
+                <Link
+                  href="/terms"
+                  className="text-sm text-ink-secondary hover:text-ink transition-colors"
+                >
                   Terms of Service
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="text-sm text-ink-secondary">Contact</span>
+                <Link
+                  href="/contact"
+                  className="text-sm text-ink-secondary hover:text-ink transition-colors"
+                >
+                  Contact
+                </Link>
               </li>
             </ul>
           </div>
