@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [verifyLoading, setVerifyLoading] = useState(false);
   const [error, setError] = useState("");
   const [showVerification, setShowVerification] = useState(false);
 
@@ -34,6 +37,36 @@ export default function SignupPage() {
     } else {
       setShowVerification(true);
       setLoading(false);
+    }
+  };
+
+  const handleVerified = async () => {
+    setVerifyLoading(true);
+    setError("");
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError(
+        error.message === "Email not confirmed"
+          ? "Your email hasn't been verified yet. Please check your inbox and click the verification link first."
+          : error.message
+      );
+      setVerifyLoading(false);
+    } else {
+      const interviewSetup = sessionStorage.getItem("interviewSetup");
+      const pendingSave = sessionStorage.getItem("pendingSave");
+
+      if (interviewSetup) {
+        router.push("/interview");
+      } else if (pendingSave) {
+        router.push("/scorecard");
+      } else {
+        router.push("/dashboard");
+      }
     }
   };
 
@@ -65,10 +98,24 @@ export default function SignupPage() {
                 We sent a verification link to
               </p>
               <p className="text-sm font-medium text-ink mb-6">{email}</p>
-              <p className="text-sm text-ink-secondary">
-                Click the link in your email to verify your account
-                {hasSetupData ? " and start your interview" : ""}.
+              <p className="text-sm text-ink-secondary mb-6">
+                Click the link in your email to verify your account. Once
+                verified, come back here and continue.
               </p>
+
+              {error && (
+                <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-btn p-3 mb-4">
+                  {error}
+                </div>
+              )}
+
+              <Button
+                onClick={handleVerified}
+                loading={verifyLoading}
+                className="w-full"
+              >
+                I have verified my email
+              </Button>
             </div>
           </Card>
 
