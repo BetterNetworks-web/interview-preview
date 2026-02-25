@@ -16,6 +16,7 @@ export default function Header({ showAuth = true }: HeaderProps) {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isPro, setIsPro] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -77,8 +78,11 @@ export default function Header({ showAuth = true }: HeaderProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
   const handleLogout = async () => {
     setDropdownOpen(false);
+    closeMobileMenu();
     await supabase.auth.signOut();
     router.push("/");
   };
@@ -131,7 +135,8 @@ export default function Header({ showAuth = true }: HeaderProps) {
           InterviewPreview
         </Link>
 
-        <nav className="flex items-center gap-8">
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-8">
           <Link
             href="/pricing"
             className="font-body text-sm text-ink-secondary hover:text-ink transition-colors"
@@ -254,7 +259,127 @@ export default function Header({ showAuth = true }: HeaderProps) {
             </>
           )}
         </nav>
+
+        {/* Mobile hamburger button */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden flex items-center justify-center w-10 h-10 text-ink"
+          aria-label="Toggle menu"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            {mobileMenuOpen ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            )}
+          </svg>
+        </button>
       </div>
+
+      {/* Mobile menu overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 top-16 z-[9999] md:hidden">
+          <div
+            className="absolute inset-0 bg-ink/20"
+            onClick={closeMobileMenu}
+          />
+          <nav className="relative bg-paper border-b border-border shadow-lg">
+            <div className="flex flex-col py-4 px-6 gap-1">
+              <Link
+                href="/pricing"
+                onClick={closeMobileMenu}
+                className="font-body text-sm text-ink-secondary hover:text-ink transition-colors py-3 border-b border-border/50"
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/blog"
+                onClick={closeMobileMenu}
+                className="font-body text-sm text-ink-secondary hover:text-ink transition-colors py-3 border-b border-border/50"
+              >
+                Blog
+              </Link>
+              {showAuth && (
+                <>
+                  {isLoggedIn ? (
+                    <>
+                      <Link
+                        href="/dashboard"
+                        onClick={closeMobileMenu}
+                        className="font-body text-sm text-ink-secondary hover:text-ink transition-colors py-3 border-b border-border/50"
+                      >
+                        Dashboard
+                      </Link>
+                      <div className="py-3 border-b border-border/50">
+                        <div className="flex items-center gap-2 mb-1">
+                          {isPro && (
+                            <span className="bg-accent text-parchment text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full">
+                              PRO
+                            </span>
+                          )}
+                          <span className="font-body text-xs text-ink-secondary truncate">
+                            {userEmail}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          closeMobileMenu();
+                          handleManagePlan();
+                        }}
+                        disabled={portalLoading}
+                        className="text-left font-body text-sm text-ink-secondary hover:text-ink transition-colors py-3 border-b border-border/50"
+                      >
+                        {isPro ? "Manage Plan" : "Upgrade to Pro"}
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="text-left font-body text-sm text-ink-secondary hover:text-ink transition-colors py-3"
+                      >
+                        Log Out
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        onClick={closeMobileMenu}
+                        className="font-body text-sm text-ink-secondary hover:text-ink transition-colors py-3 border-b border-border/50"
+                      >
+                        Log in
+                      </Link>
+                      <Link
+                        href="/setup"
+                        onClick={closeMobileMenu}
+                        className="py-3"
+                      >
+                        <Button size="sm" className="w-full">
+                          Start Your First Interview
+                        </Button>
+                      </Link>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
